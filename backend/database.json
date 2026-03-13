@@ -1,4 +1,4 @@
-{
+
   "defaultEnv": "docker",
   "docker": {
     "host": "postgres",
