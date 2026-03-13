@@ -3,7 +3,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: app-backend
     ports:
       - "5000:5000"
     volumes:
@@ -25,7 +24,6 @@ services:
 
   nginx-rtmp:
     image: alfg/nginx-rtmp
-    container_name: nginx-rtmp
     ports:
       - "1935:1935"
       - "8081:80"
@@ -40,7 +38,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: app-frontend
     ports:
       - "3000:3000"
     volumes:
@@ -61,7 +58,6 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: app-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: streaming_platform

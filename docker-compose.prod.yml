@@ -3,7 +3,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    container_name: app-backend
     ports:
       - "5000:5000"
     volumes:
@@ -20,7 +19,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    container_name: app-frontend
     ports:
       - "80:80"
     env_file:
@@ -33,7 +31,6 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: app-postgres
     restart: unless-stopped
     env_file:
       - ./.env.prod
@@ -44,7 +41,6 @@ services:
 
   nginx-rtmp:
     image: alfg/nginx-rtmp
-    container_name: nginx-rtmp
     ports:
       - "1935:1935"
       - "8081:80"
