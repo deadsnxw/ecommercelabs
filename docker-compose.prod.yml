@@ -1,0 +1,62 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: app-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+    env_file:
+      - ./.env.prod
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: app-frontend
+    ports:
+      - "80:80"
+    env_file:
+      - ./.env.prod
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:16
+    container_name: app-postgres
+    restart: unless-stopped
+    env_file:
+      - ./.env.prod
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  nginx-rtmp:
+    image: alfg/nginx-rtmp
+    container_name: nginx-rtmp
+    ports:
+      - "1935:1935"
+      - "8081:80"
+    volumes:
+      - ./nginx-rtmp/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pg_data:

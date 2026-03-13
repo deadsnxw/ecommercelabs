@@ -1,0 +1,267 @@
+/* ─── ДЕСКТОП НАВБАР ──────────────────────────────────────────────────────── */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: #FAFAFA;
+  color: #1f1f23;
+  min-height: 56px;
+  box-sizing: border-box;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.navbar-logo:hover {
+  transform: scale(1.08);
+}
+.navbar-logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+.navbar-logo:hover .navbar-logo-img {
+  filter: drop-shadow(0 0 8px rgba(145, 71, 255, 0.5));
+}
+.navbar-link {
+  color: #53535f;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+.navbar-link:hover {
+  color: #1f1f23;
+  background: rgba(0, 0, 0, 0.05);
+}
+.navbar-link.active {
+  color: #9147ff;
+  position: relative;
+}
+.navbar-link.active::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 2px;
+  background: #9147ff;
+  border-radius: 1px;
+}
+.navbar-search {
+  flex: 1;
+  max-width: 400px;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  background: #EEEEF5;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+.navbar-search:focus-within {
+  border-color: #9147ff;
+  background: #fff;
+}
+.navbar-search-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: #1f1f23;
+  font-size: 14px;
+  outline: none;
+}
+.navbar-search-input::placeholder {
+  color: #6b6b76;
+}
+.navbar-search-btn {
+  padding: 8px 12px;
+  border: none;
+  background: #9147ff;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.navbar-search-btn:hover {
+  background: #772ce8;
+}
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.navbar-icon-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: #53535f;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+
+.navbar-icon-btn.active {
+  color: #9147ff;
+}
+
+.navbar-icon-btn:hover {
+  color: #1f1f23;
+  background: rgba(0, 0, 0, 0.06);
+}
+.navbar-profile-link {
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  text-decoration: none;
+}
+.navbar-profile {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e5e5e5;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.navbar-profile-link:hover .navbar-profile {
+  border-color: #9147ff;
+}
+.navbar-profile-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b6b76;
+  font-size: 14px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.navbar-profile-link:hover .navbar-profile-placeholder {
+  border-color: #9147ff;
+}
+
+/* ─── МОБІЛЬНИЙ НАВБАР (знизу, < 768px) ──────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  /* Ховаємо десктопний навбар */
+  .navbar {
+    display: none;
+  }
+
+  /* Мобільний навбар знизу */
+  .mobile-navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: #ffffff;
+    border-top: 1px solid #e8e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+    font-family: 'HelveticaNeueCyr', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Кнопки навбару */
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #8888a0;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 10px;
+    transition: color 0.2s;
+    font-family: inherit;
+    min-width: 52px;
+  }
+
+  .mobile-nav-item span {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .mobile-nav-item svg {
+    flex-shrink: 0;
+  }
+
+  .mobile-nav-item.active {
+    color: #7c3aed;
+  }
+
+  /* Центральна кнопка "+" */
+  .mobile-nav-add {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #7c3aed;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+    transition: background 0.2s, transform 0.1s;
+    flex-shrink: 0;
+  }
+
+  .mobile-nav-add:active {
+    transform: scale(0.94);
+    background: #6d28d9;
+  }
+
+  /* Аватар в навбарі */
+  .mobile-nav-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent;
+  }
+
+  .mobile-nav-item.active .mobile-nav-avatar {
+    border-color: #7c3aed;
+  }
+}

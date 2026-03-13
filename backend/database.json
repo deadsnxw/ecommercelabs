@@ -1,0 +1,11 @@
+{
+  "defaultEnv": "docker",
+  "docker": {
+    "host": "postgres",
+    "port": 5432,
+    "database": "streaming_platform",
+    "user": "postgres",
+    "password": "123456",
+    "ssl": false
+  }
+}

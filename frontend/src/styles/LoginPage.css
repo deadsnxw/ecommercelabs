@@ -1,0 +1,342 @@
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+
+.loginContainer {
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 1920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  font-family: 'HelveticaNeueCyr', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #FAFAFA;
+  overflow: hidden;
+}
+
+/* ─── Star Background ─────────────────────────────────────────────────────── */
+
+.star-background {
+  position: absolute;
+  top: -250px;
+  left: -257px;
+  width: 1720px;
+  height: 1479px;
+  background-image: url('../../public/star.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 0;
+  filter: contrast(1.1) saturate(1.1);
+}
+
+.login-logo {
+  width: 240px;
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ─── Left Panel ──────────────────────────────────────────────────────────── */
+
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  padding: 60px 60px 60px 100px;
+  z-index: 1;
+}
+
+.text-content {
+  position: relative;
+  z-index: 2;
+  max-width: 652px;
+  margin-left: 60px;
+}
+
+.main-title {
+  font-size: 64px;
+  font-weight: 500;
+  color: #0C0C0C;
+  line-height: 1.1;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.5px;
+  font-family: 'HelveticaNeueCyr', sans-serif;
+}
+
+.subtitle {
+  font-size: 24px;
+  font-weight: 400;
+  color: #F5F5F5;
+  line-height: 1.6;
+  margin: 0;
+  font-family: 'HelveticaNeueCyr', sans-serif;
+}
+
+/* ─── Right Panel ─────────────────────────────────────────────────────────── */
+
+.login-right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 60px 80px;
+  gap: 16px;
+  min-width: 600px;
+  border: 2px solid #0C0C0C;
+  border-radius: 15px 0 0 15px;
+  background-color: #0C0C0C;
+  box-sizing: border-box;
+}
+
+.login-right-title {
+  font-family: 'HelveticaNeueCyr', sans-serif;
+  color: #FAFAFA;
+  font-weight: 500;
+  font-size: 46px;
+  margin: 0 0 8px 0;
+  align-self: flex-center;
+}
+
+/* ─── Error ───────────────────────────────────────────────────────────────── */
+
+.error {
+  width: 100%;
+  padding: 12px 16px;
+  background: #2a1010;
+  border: 1px solid #ff4444;
+  border-radius: 10px;
+  color: #ff6b6b;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* ─── Form ────────────────────────────────────────────────────────────────── */
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group input {
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: 1.5px solid #2a2a2a;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: text;
+  background-color: #181818;
+  color: #FAFAFA;
+  box-sizing: border-box;
+  outline: none;
+  font-family: 'HelveticaNeueCyr', sans-serif;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: #555;
+  background-color: #1e1e1e;
+}
+
+.form-group input::placeholder {
+  color: #555;
+}
+
+/* ─── Submit Button ───────────────────────────────────────────────────────── */
+
+.submit-btn {
+  width: 100%;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: #FAFAFA;
+  color: #0C0C0C;
+  margin-top: 4px;
+  box-sizing: border-box;
+  font-family: 'HelveticaNeueCyr', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ─── Footer Links ────────────────────────────────────────────────────────── */
+
+.login-forgot-btn {
+  background: none;
+  color: #888;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: -8;
+  margin-top: 0px;
+  font-family: 'HelveticaNeueCyr', sans-serif;
+  align-self: flex-center;
+  transition: color 0.2s ease;
+}
+
+.login-forgot-btn:hover {
+  color: #FAFAFA;
+}
+
+.login-register-text {
+  color: #888;
+  font-size: 14px;
+  margin: 0;
+  font-family: 'HelveticaNeueCyr', sans-serif;
+  align-self: flex-start;
+}
+
+.login-register-text a {
+  color: #FAFAFA;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-register-text a:hover {
+  text-decoration: underline;
+}
+
+.login-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 50px;
+}
+
+
+/* ─── МОБІЛЬНА ВЕРСІЯ (< 768px) ──────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  /* Загальний контейнер мобільної сторінки */
+  .login-mobile-container {
+    min-height: 100vh;
+    width: 100vw;
+    background: #FAFAFA;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 24px 40px;
+    box-sizing: border-box;
+    font-family: 'HelveticaNeueCyr', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Кнопка "Назад" */
+  .login-mobile-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: #6b6b6b;
+    font-family: 'HelveticaNeueCyr', sans-serif;
+    padding: 0;
+    margin-bottom: 32px;
+  }
+
+  /* Заголовок */
+  .login-mobile-title {
+    font-size: 40px;
+    font-weight: 500;
+    color: #0C0C0C;
+    line-height: 1.1;
+    margin: 0 0 28px 0;
+    font-family: 'HelveticaNeueCyr', sans-serif;
+  }
+
+  /* Поля форми — світлий стиль */
+  .login-mobile-container .form-group input {
+    background-color: #EFEFFA;
+    border: none;
+    color: #0C0C0C;
+    height: 60px;
+    border-radius: 14px;
+  }
+
+  .login-mobile-container .form-group input::placeholder {
+    color: #8888bb;
+  }
+
+  .login-mobile-container .form-group input:focus {
+    background-color: #e5e5f5;
+    border: none;
+  }
+
+  /* Кнопка "Забули пароль?" — темний текст */
+  .login-mobile-container .login-forgot-btn {
+    color: #5555cc;
+    text-decoration: underline;
+    align-self: flex-center;
+  }
+
+  .login-mobile-container .login-forgot-btn:hover {
+    color: #3333aa;
+  }
+
+  /* Кнопка "Увійти" */
+  .login-mobile-container .submit-btn {
+    background-color: #0C0C0C;
+    color: #FAFAFA;
+    height: 60px;
+    border-radius: 14px;
+    margin-top: 0;
+  }
+
+  .login-mobile-container .submit-btn:hover:not(:disabled) {
+    background-color: #2a2a2a;
+  }
+
+  /* Блок дій */
+  .login-mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+    margin-top: 300px; /* уменьшай чтобы поднять выше */
+    padding-top: 0;
+  }
+
+  /* Текст реєстрації */
+  .login-mobile-container .login-register-text {
+    color: #888;
+    align-self: center;
+    text-align: center;
+  }
+
+  .login-mobile-container .login-register-text a {
+    color: #0C0C0C;
+    font-weight: 600;
+  }
+
+  /* Помилка */
+  .login-mobile-container .error {
+    margin-bottom: 8px;
+  }
+}

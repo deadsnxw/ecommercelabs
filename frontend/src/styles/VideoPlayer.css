@@ -1,0 +1,416 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   VideoPlayer.css
+   Design tokens: #7c3aed (purple), HelveticaNeueCyr, border-radius 12px
+══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Wrapper ─────────────────────────────────────────────────────────────── */
+
+.vp-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    outline: none;
+    font-family: 'HelveticaNeueCyr', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    user-select: none;
+}
+
+.vp-wrapper--fullscreen {
+    border-radius: 0;
+}
+
+/* ─── Video element ───────────────────────────────────────────────────────── */
+
+.vp-video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* ─── Centre play button (shown when paused) ─────────────────────────────── */
+
+.vp-centre-btn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.vp-centre-btn__inner {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.vp-centre-btn__inner:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.06);
+}
+
+/* ─── Controls overlay ────────────────────────────────────────────────────── */
+
+.vp-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.3) 60%,
+        transparent 100%
+    );
+    padding: 0 0 4px;
+    transition: opacity 0.25s;
+}
+
+.vp-overlay--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.vp-overlay--hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ─── Progress bar ────────────────────────────────────────────────────────── */
+
+.vp-progress {
+    padding: 10px 16px 4px;
+    cursor: pointer;
+}
+
+.vp-progress__track {
+    position: relative;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: visible;
+    transition: height 0.15s;
+}
+
+.vp-progress:hover .vp-progress__track {
+    height: 6px;
+}
+
+.vp-progress__buffered {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    transition: width 0.3s;
+}
+
+.vp-progress__fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #7c3aed;
+    border-radius: 2px;
+    transition: width 0.1s;
+}
+
+.vp-progress__thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 3px #7c3aed;
+    pointer-events: none;
+    transition: left 0.1s, opacity 0.15s;
+    opacity: 0;
+}
+
+.vp-progress:hover .vp-progress__thumb {
+    opacity: 1;
+}
+
+/* ─── Bottom control bar ──────────────────────────────────────────────────── */
+
+.vp-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 12px 8px;
+    gap: 4px;
+}
+
+.vp-controls__group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* ─── Generic icon button ─────────────────────────────────────────────────── */
+
+.vp-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.vp-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.vp-btn--speed {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: rgba(255, 255, 255, 0.8);
+    min-width: 32px;
+    justify-content: center;
+}
+
+/* ─── Volume ──────────────────────────────────────────────────────────────── */
+
+.vp-volume-wrap {
+    width: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.vp-volume-slider {
+    width: 100%;
+    accent-color: #7c3aed;
+    cursor: pointer;
+    height: 4px;
+}
+
+/* ─── Time text ───────────────────────────────────────────────────────────── */
+
+.vp-time {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    padding: 0 4px;
+    white-space: nowrap;
+}
+
+/* ─── Speed / Settings popup ─────────────────────────────────────────────── */
+
+.vp-settings-wrap {
+    position: relative;
+}
+
+.vp-settings-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    background: rgba(18, 18, 28, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    min-width: 140px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.vp-settings-menu__title {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin: 2px 8px 6px;
+}
+
+.vp-settings-menu__item {
+    display: block;
+    width: 100%;
+    padding: 7px 10px;
+    background: none;
+    border: none;
+    border-radius: 7px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: background 0.12s, color 0.12s;
+}
+
+.vp-settings-menu__item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.vp-settings-menu__item--active {
+    background: rgba(124, 58, 237, 0.2);
+    color: #fff;
+    font-weight: 700;
+}
+
+/* ─── VideoModal top bar ──────────────────────────────────────────────────── */
+
+.vm-topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.vm-title-block {
+    flex: 1;
+    min-width: 0;
+}
+
+.vm-title {
+    margin: 0;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vm-description {
+    margin: 4px 0 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+}
+
+.vm-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.vm-btn {
+    padding: 7px 14px;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.vm-btn:hover { opacity: 0.88; }
+.vm-btn:active { transform: scale(0.97); }
+
+.vm-btn--edit   { background-color: #6441A5; }
+.vm-btn--delete { background-color: #dc3545; }
+
+.vm-btn--close {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.vm-btn--close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.vm-error {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 40px 0;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .vp-volume-wrap {
+        display: none; /* слайдер громкості займає багато місця — ховаємо */
+    }
+
+    .vp-time {
+        font-size: 11px;
+    }
+
+    .vp-btn {
+        padding: 5px 6px;
+    }
+
+    .vp-btn--speed {
+        min-width: 26px;
+        font-size: 11px;
+    }
+
+    .vp-progress {
+        padding: 8px 10px 4px;
+    }
+
+    .vp-controls {
+        padding: 2px 8px 6px;
+        gap: 2px;
+    }
+
+    .vp-centre-btn__inner {
+        width: 44px;
+        height: 44px;
+    }
+
+    .vp-settings-menu {
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 400px) {
+    .vp-time {
+        display: none; /* на совсем маленьких экранах убираем время */
+    }
+
+    .vp-btn {
+        padding: 4px 5px;
+    }
+}
