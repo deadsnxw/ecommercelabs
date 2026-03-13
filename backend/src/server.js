@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import app from './app.js';
 import http from 'http';
 import { Server } from 'socket.io';
+import { pool } from './db/db.js';
 
 dotenv.config();
 
@@ -64,6 +65,28 @@ io.on("connection", (socket) => {
 server.listen(PORT, HOST, () => {
     console.log(`Server running on http://${HOST}:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV}`);
+});
+
+process.on("SIGTERM", async () => {
+    console.log("SIGTERM received. Starting graceful shutdown...");
+
+    try {
+        io.close(() => {
+            console.log("Socket.IO connections closed");
+        });
+
+        server.close(async () => {
+            console.log("HTTP server closed");
+            await pool.end();
+            console.log("Database connections closed");
+
+            process.exit(0);
+        });
+
+    } catch (err) {
+        console.error("Error during shutdown:", err);
+        process.exit(1);
+    }
 });
 
 export { io };
