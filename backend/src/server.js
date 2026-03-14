@@ -1,10 +1,8 @@
-import dotenv from 'dotenv';
 import app from './app.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { pool } from './db/db.js';
 import { logger } from './utils/logger.js';
-dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -20,7 +18,6 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     logger.info("New user connected", { socketId: socket.id });
 
-    /* ── Private chats  ── */
     socket.on("join_chat", (chatId) => {
         socket.join(`chat_${chatId}`);
         logger.info("Socket joined chat", { socketId: socket.id, chatId });
