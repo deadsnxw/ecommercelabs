@@ -30,6 +30,9 @@ jobs:
       - name: Build and Start
         run: docker compose up -d
 
+      - name: Debug env in container
+        run: docker exec app printenv | grep -E "DB_|DATABASE|POSTGRES"
+
       - name: Debug containers
         if: ${{ always() }}
         run: docker compose logs backend --tail 50
