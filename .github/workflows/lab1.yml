@@ -12,6 +12,9 @@ jobs:
       - name: Install Tools
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
+      - name: Print .env
+        run: cat .env
+
       - name: Create .env
         run: |
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
