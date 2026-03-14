@@ -27,6 +27,7 @@ jobs:
         run: docker compose up -d
 
       - name: Debug containers
+        if: ${{ always() }}
         run: docker compose logs postgres
 
       - name: Wait for Readiness
