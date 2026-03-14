@@ -20,7 +20,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     logger.info("New user connected", { socketId: socket.id });
 
-    /* ── Private chats ── */
+    /* ── Private chats  ── */
     socket.on("join_chat", (chatId) => {
         socket.join(`chat_${chatId}`);
         logger.info("Socket joined chat", { socketId: socket.id, chatId });
