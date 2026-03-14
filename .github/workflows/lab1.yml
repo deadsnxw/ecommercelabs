@@ -22,15 +22,12 @@ jobs:
           echo "CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}" >> .env
           echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> .env
 
-      - name: print env
-        run: cat .env
-
       - name: Build and Start
         run: docker compose up -d
 
       - name: Debug containers
         if: ${{ always() }}
-        run: docker compose logs backend
+        run: docker compose logs backend --tail 50
 
       - name: Wait for Readiness
         run: |
