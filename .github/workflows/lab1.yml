@@ -26,6 +26,9 @@ jobs:
           CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
         run: docker compose up -d
 
+      - name: Debug containers
+        run: docker compose logs postgres
+
       - name: Wait for Readiness
         run: |
           for i in {1..15}; do
