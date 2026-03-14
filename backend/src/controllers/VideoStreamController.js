@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getVideoById } from '../db/video.repository.js';
+import { logger } from '../utils/logger.js';
 
 export const watchVideo = async (req, res) => {
     try {
@@ -12,7 +13,6 @@ export const watchVideo = async (req, res) => {
         }
 
         const video = await getVideoById(id);
-
         if (!video) {
             return res.status(404).json({ message: 'Video not found' });
         }
@@ -22,17 +22,14 @@ export const watchVideo = async (req, res) => {
         }
 
         const videoPath = path.resolve(`.${video.video_url}`);
-
         if (!fs.existsSync(videoPath)) {
             return res.status(404).json({ message: 'Video file not found' });
         }
 
         const videoSize = fs.statSync(videoPath).size;
-
         const CHUNK_SIZE = 1 * 1024 * 1024; // 1MB
         const start = Number(range.replace(/\D/g, ''));
         const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
-
         const contentLength = end - start + 1;
 
         res.writeHead(206, {
@@ -45,7 +42,7 @@ export const watchVideo = async (req, res) => {
         const stream = fs.createReadStream(videoPath, { start, end });
         stream.pipe(res);
     } catch (error) {
-        console.error('Watch video error:', error);
+        logger.error("Watch video error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to stream video' });
     }
 };
