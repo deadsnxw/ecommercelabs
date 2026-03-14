@@ -45,7 +45,15 @@ jobs:
             echo "Waiting..."
             sleep 5
           done
+          
+      - name: Debug backend logs after wait
+        if: always()
+        run: docker compose logs backend --tail 100
 
+      - name: Check container status
+        if: always()  
+        run: docker ps -a
+        
       - name: Run Grading Script
         run: |
           chmod +x ./tests/lab1_test.sh
