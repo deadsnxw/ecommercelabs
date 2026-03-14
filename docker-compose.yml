@@ -25,6 +25,7 @@ services:
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - EMAIL_FROM=${EMAIL_FROM}
+      - DOTENV_QUIET=true
     # env_file:
     #   - ./.env
     networks:
