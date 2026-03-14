@@ -27,7 +27,7 @@ fi
 # 4. Тест на стійкість (Resilience)
 echo "Step 3: Stopping DB to check 503 error..."
 # Автоматично знаходимо ім'я контейнера бази даних через docker-compose
-DB_CONTAINER=$(docker compose ps -q db)
+DB_CONTAINER=$(docker compose ps -q postgres)
 docker stop $DB_CONTAINER > /dev/null
 sleep 3
 STATUS_503=$(curl -s -o /dev/null -w "%{http_code}" localhost:5000/health)
