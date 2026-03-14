@@ -12,6 +12,9 @@ jobs:
       - name: Install Tools
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
+      - name: Create .env
+        run: touch .env
+
       - name: Build and Start
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
