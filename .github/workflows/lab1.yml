@@ -30,17 +30,17 @@ jobs:
 
       - name: Debug containers
         if: ${{ always() }}
-        run: docker compose logs postgres
+        run: docker compose logs backend
 
       - name: Wait for Readiness
         run: |
-          for i in {1..30}; do
+          for i in {1..15}; do
             if curl -s localhost:5000/health; then
               echo "App is ready!"
               break
             fi
             echo "Waiting..."
-            sleep 5
+            sleep 3
           done
 
       - name: Run Grading Script
