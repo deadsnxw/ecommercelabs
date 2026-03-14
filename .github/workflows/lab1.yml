@@ -13,6 +13,16 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
       - name: Build and Start
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
         run: docker compose up -d
 
       - name: Wait for Readiness
