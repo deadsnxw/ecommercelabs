@@ -22,7 +22,7 @@ app.use('/api/videos', videoRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/streams", streamRoutes);
-app.use("/api", healthRoutes);
+app.use("/", healthRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
