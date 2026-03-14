@@ -23,8 +23,8 @@ services:
       - DB_NAME=${POSTGRES_DB}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
-    env_file:
-      - ./.env
+    # env_file:
+    #   - ./.env
     networks:
       - app-network
     restart: unless-stopped
