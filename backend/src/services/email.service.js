@@ -1,13 +1,13 @@
 import { Resend } from "resend";
+import { logger } from "../utils/logger.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendPasswordResetCode = async (email, code) => {
-  console.log("📨 Sending reset code to:", email, "code:", code);
-
+  logger.info("Sending password reset code", { email });
   try {
     const result = await resend.emails.send({
-      from: process.env.EMAIL_FROM, 
+      from: process.env.EMAIL_FROM,
       to: email,
       subject: "Password reset code",
       html: `
@@ -20,12 +20,10 @@ export const sendPasswordResetCode = async (email, code) => {
         </div>
       `,
     });
-
-    console.log("✅ RESEND RESULT:", result);
-
+    logger.info("Password reset code sent", { email, resendId: result?.id });
     return result;
   } catch (error) {
-    console.error("❌ RESEND ERROR:", error);
+    logger.error("Resend email error", { email, error: error.message, stack: error.stack });
     throw error;
   }
 };

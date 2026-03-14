@@ -14,6 +14,7 @@ import {
     replaceVideoTags,
     getVideoTags
 } from '../db/video.repository.js';
+import { logger } from '../utils/logger.js';
 
 export const watchVideo = async (req, res) => {
     try {
@@ -61,9 +62,8 @@ export const watchVideo = async (req, res) => {
 
             file.pipe(res);
         }
-
     } catch (error) {
-        console.error('Watch video error:', error);
+        logger.error("Watch video error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to stream video', error: error.message });
     }
 };
@@ -103,7 +103,7 @@ export const uploadVideo = async (req, res) => {
         }
 
         const video = await createVideo({
-            userId: userId,
+            userId,
             title,
             description: description || '',
             videoUrl,
@@ -114,12 +114,9 @@ export const uploadVideo = async (req, res) => {
             tags: tagArray
         });
 
-        res.status(201).json({
-            message: 'Video uploaded successfully',
-            video
-        });
+        res.status(201).json({ message: 'Video uploaded successfully', video });
     } catch (error) {
-        console.error('Upload video error:', error);
+        logger.error("Upload video error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to upload video', error: error.message });
     }
 };
@@ -127,7 +124,6 @@ export const uploadVideo = async (req, res) => {
 export const getVideo = async (req, res) => {
     try {
         const { id } = req.params;
-
         const video = await getVideoById(id);
 
         if (!video) {
@@ -142,7 +138,7 @@ export const getVideo = async (req, res) => {
 
         res.json(video);
     } catch (error) {
-        console.error('Get video error:', error);
+        logger.error("Get video error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to get video', error: error.message });
     }
 };
@@ -150,16 +146,10 @@ export const getVideo = async (req, res) => {
 export const getPublicVideos = async (req, res) => {
     try {
         const { limit = 20, offset = 0 } = req.query;
-
         const videos = await getAllPublicVideos(parseInt(limit), parseInt(offset));
-
-        res.json({
-            videos,
-            limit: parseInt(limit),
-            offset: parseInt(offset)
-        });
+        res.json({ videos, limit: parseInt(limit), offset: parseInt(offset) });
     } catch (error) {
-        console.error('Get public videos error:', error);
+        logger.error("Get public videos error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to get videos', error: error.message });
     }
 };
@@ -172,11 +162,10 @@ export const getMyVideos = async (req, res) => {
             return res.status(401).json({ message: 'User not authenticated' });
         }
 
-        const videos = await getUserVideos(userId, true); // Включаючи приватні
-
+        const videos = await getUserVideos(userId, true);
         res.json({ videos });
     } catch (error) {
-        console.error('Get my videos error:', error);
+        logger.error("Get my videos error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to get videos', error: error.message });
     }
 };
@@ -184,15 +173,12 @@ export const getMyVideos = async (req, res) => {
 export const getUserVideosList = async (req, res) => {
     try {
         const { userId } = req.params;
-
         const currentUserId = req.user?.user_id || req.user?.id;
-
         const includePrivate = req.user && currentUserId === parseInt(userId);
         const videos = await getUserVideos(userId, includePrivate);
-
         res.json({ videos });
     } catch (error) {
-        console.error('Get user videos error:', error);
+        logger.error("Get user videos error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to get videos', error: error.message });
     }
 };
@@ -233,7 +219,7 @@ export const updateVideoDetails = async (req, res) => {
 
         res.json({ message: 'Video updated successfully', video });
     } catch (error) {
-        console.error('Update video error:', error);
+        logger.error("Update video error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to update video', error: error.message });
     }
 };
@@ -241,17 +227,13 @@ export const updateVideoDetails = async (req, res) => {
 export const deleteVideoById = async (req, res) => {
     try {
         const { id } = req.params;
-
         const userId = req.user.user_id || req.user.id;
 
         if (!userId) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
 
-        console.log('Delete video request:', {
-            videoId: id,
-            userId: userId
-        });
+        logger.info("Delete video request", { videoId: id, userId });
 
         const video = await deleteVideo(id, userId);
 
@@ -261,7 +243,7 @@ export const deleteVideoById = async (req, res) => {
 
         res.json({ message: 'Video deleted successfully' });
     } catch (error) {
-        console.error('Delete video error:', error);
+        logger.error("Delete video error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to delete video', error: error.message });
     }
 };
@@ -289,12 +271,9 @@ export const recordWatch = async (req, res) => {
             return res.json({ message: 'View recorded (owner view, count not incremented)' });
         }
 
-        // Very short videos (1-4 seconds): require 50% of duration (handles 1-second videos)
-        // Short videos (5-120 seconds / 2 minutes): require 2 seconds
-        // Long videos (>120 seconds): require 30 seconds or 50% of duration, whichever is smaller
         const videoDuration = video.duration || 0;
         let requiredWatchTime;
-        
+
         if (videoDuration <= 4) {
             requiredWatchTime = Math.max(1, Math.ceil(videoDuration * 0.5));
         } else if (videoDuration <= 120) {
@@ -303,7 +282,7 @@ export const recordWatch = async (req, res) => {
             const fiftyPercent = Math.ceil(videoDuration * 0.5);
             requiredWatchTime = Math.min(30, fiftyPercent);
         }
-        
+
         requiredWatchTime = Math.min(requiredWatchTime, videoDuration);
 
         const ipAddress = req.ip || req.connection.remoteAddress;
@@ -316,7 +295,7 @@ export const recordWatch = async (req, res) => {
             res.json({ message: 'View recorded but not counted (insufficient watch time)', counted: false });
         }
     } catch (error) {
-        console.error('Record watch error:', error);
+        logger.error("Record watch error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to record watch', error: error.message });
     }
 };
@@ -327,23 +306,13 @@ export const searchVideosController = async (req, res) => {
 
         if (!q || q.trim().length === 0) {
             const videos = await getAllPublicVideos(parseInt(limit), parseInt(offset));
-            return res.json({
-                videos,
-                limit: parseInt(limit),
-                offset: parseInt(offset)
-            });
+            return res.json({ videos, limit: parseInt(limit), offset: parseInt(offset) });
         }
 
         const videos = await searchVideos(q.trim(), parseInt(limit), parseInt(offset));
-
-        res.json({
-            videos,
-            query: q.trim(),
-            limit: parseInt(limit),
-            offset: parseInt(offset)
-        });
+        res.json({ videos, query: q.trim(), limit: parseInt(limit), offset: parseInt(offset) });
     } catch (error) {
-        console.error('Search videos error:', error);
+        logger.error("Search videos error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to search videos', error: error.message });
     }
 };
@@ -354,7 +323,7 @@ export const getPopularTagsController = async (req, res) => {
         const tags = await getPopularTags(limit);
         res.json({ tags });
     } catch (error) {
-        console.error('Get popular tags error:', error);
+        logger.error("Get popular tags error", { error: error.message, stack: error.stack });
         res.status(500).json({ message: 'Failed to get popular tags', error: error.message });
     }
 };
