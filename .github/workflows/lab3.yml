@@ -1,0 +1,67 @@
+name: Lab 3 Grading
+on:
+  push:
+    branches: [lab03]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create KinD cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: lab3-cluster
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Kubernetes Secret
+        run: |
+          kubectl create secret generic ecommerce-secret \
+            --from-literal=DB_USER=${{ secrets.DB_USER }} \
+            --from-literal=DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --from-literal=JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --from-literal=JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }} \
+            --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --from-literal=RESEND_API_KEY=${{ secrets.RESEND_API_KEY }} \
+            --from-literal=EMAIL_FROM=${{ secrets.EMAIL_FROM }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Load image into KinD
+        run: |
+          docker pull ghcr.io/deadsnxw/ecommerce-app:latest
+          kind load docker-image ghcr.io/deadsnxw/ecommerce-app:latest --name lab3-cluster
+
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f k8s/
+
+      - name: Wait for PostgreSQL to be ready
+        run: kubectl rollout status deployment/postgres --timeout=60s
+
+      - name: Run Grading Script
+        run: |
+          chmod +x ./tests/lab3_test.sh
+          ./tests/lab3_test.sh
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          echo "=== Pods ==="
+          kubectl get pods -o wide
+          echo "=== App logs ==="
+          kubectl logs -l app=ecommerce-app --tail=50 || true
+          echo "=== Init container logs ==="
+          kubectl logs -l app=ecommerce-app -c wait-for-postgres --tail=20 || true
+          echo "=== Describe pods ==="
+          kubectl describe pods -l app=ecommerce-app || true
+          echo "=== Events ==="
+          kubectl get events --sort-by='.lastTimestamp' || true

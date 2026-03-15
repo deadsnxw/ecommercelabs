@@ -1,14 +1,10 @@
 import { pool } from '../db/db.js';
+import { logger } from '../utils/logger.js';
 
 const RTMP_STAT_URL = process.env.RTMP_STAT_URL || 'http://nginx-rtmp/stat';
 
-/**
- * Parse active stream keys from the nginx-rtmp /stat XML.
- * We only look at the "stream" application (the RTMP ingest point).
- */
 function parseActiveStreamKeys(xml) {
     const keys = [];
-    // Match the <application> block whose <name> is "stream"
     const appBlock = xml.match(
         /<application>\s*<name>stream<\/name>([\s\S]*?)<\/application>/
     );
@@ -22,11 +18,6 @@ function parseActiveStreamKeys(xml) {
     return keys;
 }
 
-/**
- * GET /api/streams/live
- * Returns the list of currently live users with their stream data.
- * Optional query param: q — filter by nickname or stream_title (partial, case-insensitive).
- */
 export const getLiveStreams = async (req, res) => {
     try {
         const response = await fetch(RTMP_STAT_URL);
@@ -60,15 +51,11 @@ export const getLiveStreams = async (req, res) => {
 
         res.json({ streams });
     } catch (err) {
-        console.error('getLiveStreams error:', err.message);
+        logger.error("getLiveStreams error", { error: err.message, stack: err.stack });
         res.json({ streams: [] });
     }
 };
 
-/**
- * GET /api/streams/me/key  (authenticated)
- * Returns the current user's stream key + OBS connection info.
- */
 export const getMyStreamKey = async (req, res) => {
     try {
         const { rows } = await pool.query(
@@ -80,7 +67,6 @@ export const getMyStreamKey = async (req, res) => {
 
         let streamKey = rows[0].stream_key;
 
-        // Generate one if missing
         if (!streamKey) {
             streamKey = `stream_${req.user.user_id}`;
             await pool.query(
@@ -94,15 +80,11 @@ export const getMyStreamKey = async (req, res) => {
             rtmp_url: 'rtmp://localhost:1935/stream',
         });
     } catch (err) {
-        console.error('getMyStreamKey error:', err);
+        logger.error("getMyStreamKey error", { error: err.message, stack: err.stack });
         res.status(500).json({ message: 'Failed to get stream key' });
     }
 };
 
-/**
- * PATCH /api/streams/me/info  (authenticated)
- * Update the stream title and description.
- */
 export const updateStreamInfo = async (req, res) => {
     try {
         const { stream_title, stream_description } = req.body;
@@ -131,15 +113,11 @@ export const updateStreamInfo = async (req, res) => {
 
         res.json({ message: 'Stream info updated' });
     } catch (err) {
-        console.error('updateStreamInfo error:', err);
+        logger.error("updateStreamInfo error", { error: err.message, stack: err.stack });
         res.status(500).json({ message: 'Failed to update stream info' });
     }
 };
 
-/**
- * GET /api/streams/status/:userId
- * Check if a specific user is currently live.
- */
 export const getStreamStatus = async (req, res) => {
     try {
         const { rows } = await pool.query(
@@ -172,7 +150,7 @@ export const getStreamStatus = async (req, res) => {
             bio: user.bio,
         });
     } catch (err) {
-        console.error('getStreamStatus error:', err.message);
+        logger.error("getStreamStatus error", { error: err.message, stack: err.stack });
         res.json({ live: false });
     }
 };
