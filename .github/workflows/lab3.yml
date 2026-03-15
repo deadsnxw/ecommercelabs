@@ -1,4 +1,3 @@
-cat > .github/workflows/lab3.yml << 'EOF'
 name: Lab 3 Grading
 on:
   push:
@@ -66,4 +65,3 @@ jobs:
           kubectl describe pods -l app=ecommerce-app || true
           echo "=== Events ==="
           kubectl get events --sort-by='.lastTimestamp' || true
-EOF
