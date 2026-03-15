@@ -1,16 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: {{ .Release.Name }}-postgres
+  labels:
+    app: {{ .Release.Name }}-postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: {{ .Release.Name }}-postgres
   template:
     metadata:
       labels:
-        app: postgres
+        app: {{ .Release.Name }}-postgres
     spec:
       containers:
         - name: postgres
@@ -31,7 +33,7 @@ spec:
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: ecommerce-config
+                  name: {{ .Release.Name }}-config
                   key: DB_NAME
 ---
 apiVersion: v1
@@ -40,7 +42,7 @@ metadata:
   name: postgres
 spec:
   selector:
-    app: postgres
+    app: {{ .Release.Name }}-postgres
   ports:
     - port: 5432
       targetPort: 5432

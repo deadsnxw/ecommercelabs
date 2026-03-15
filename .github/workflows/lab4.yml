@@ -1,0 +1,29 @@
+name: Lab 4 Grading
+on:
+  push:
+    branches: [lab04]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Create KinD cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: lab4-cluster
+
+      - name: Run Grading Script
+        run: |
+          chmod +x ./tests/lab4_test.sh
+          ./tests/lab4_test.sh
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          helm lint ./charts/ecommerce-app || true
+          helm template ecommerce ./charts/ecommerce-app -f ./charts/ecommerce-app/values-prod.yaml || true
