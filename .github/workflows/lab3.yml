@@ -1,16 +1,14 @@
+cat > .github/workflows/lab3.yml << 'EOF'
 name: Lab 3 Grading
-
 on:
   push:
     branches: [lab03]
-
 jobs:
   validate:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,25 +25,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inspect image CMD
+      - name: Create Kubernetes Secret
         run: |
-          docker pull ghcr.io/deadsnxw/ecommerce-app:latest
-          echo "=== CMD in image ==="
-          docker inspect ghcr.io/deadsnxw/ecommerce-app:latest --format='{{json .Config.Cmd}}'
-          echo "=== Entrypoint ==="
-          docker inspect ghcr.io/deadsnxw/ecommerce-app:latest --format='{{json .Config.Entrypoint}}'
-          echo "=== Test run ==="
-          docker run --rm \
-            -e DB_HOST=localhost \
-            -e DB_PORT=5432 \
-            -e DB_NAME=test \
-            -e DB_USER=test \
-            -e DB_PASSWORD=test \
-            ghcr.io/deadsnxw/ecommerce-app:latest \
-            sh -c "echo 'Container works'" || true
+          kubectl create secret generic ecommerce-secret \
+            --from-literal=DB_USER=${{ secrets.DB_USER }} \
+            --from-literal=DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --from-literal=JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --from-literal=JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }} \
+            --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --from-literal=RESEND_API_KEY=${{ secrets.RESEND_API_KEY }} \
+            --from-literal=EMAIL_FROM=${{ secrets.EMAIL_FROM }} \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Load image into KinD
         run: |
+          docker pull ghcr.io/deadsnxw/ecommerce-app:latest
           kind load docker-image ghcr.io/deadsnxw/ecommerce-app:latest --name lab3-cluster
 
       - name: Apply Kubernetes manifests
@@ -58,3 +52,18 @@ jobs:
         run: |
           chmod +x ./tests/lab3_test.sh
           ./tests/lab3_test.sh
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          echo "=== Pods ==="
+          kubectl get pods -o wide
+          echo "=== App logs ==="
+          kubectl logs -l app=ecommerce-app --tail=50 || true
+          echo "=== Init container logs ==="
+          kubectl logs -l app=ecommerce-app -c wait-for-postgres --tail=20 || true
+          echo "=== Describe pods ==="
+          kubectl describe pods -l app=ecommerce-app || true
+          echo "=== Events ==="
+          kubectl get events --sort-by='.lastTimestamp' || true
+EOF
