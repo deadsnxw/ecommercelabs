@@ -1,4 +1,6 @@
 import pkg from 'pg';
+import { logger } from '../utils/logger.js';
+
 const { Pool } = pkg;
 
 export const pool = new Pool({
@@ -10,5 +12,9 @@ export const pool = new Pool({
 });
 
 pool.on('connect', () => {
-    console.log('Connected to PostgreSQL');
+    logger.info('Connected to PostgreSQL');
+});
+
+pool.on('error', (err) => {
+    logger.error('PostgreSQL pool error', { error: err.message, stack: err.stack });
 });
