@@ -27,9 +27,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Load image into KinD
+      - name: Inspect image CMD
         run: |
           docker pull ghcr.io/deadsnxw/ecommerce-app:latest
+          echo "=== CMD in image ==="
+          docker inspect ghcr.io/deadsnxw/ecommerce-app:latest --format='{{json .Config.Cmd}}'
+          echo "=== Entrypoint ==="
+          docker inspect ghcr.io/deadsnxw/ecommerce-app:latest --format='{{json .Config.Entrypoint}}'
+          echo "=== Test run ==="
+          docker run --rm \
+            -e DB_HOST=localhost \
+            -e DB_PORT=5432 \
+            -e DB_NAME=test \
+            -e DB_USER=test \
+            -e DB_PASSWORD=test \
+            ghcr.io/deadsnxw/ecommerce-app:latest \
+            sh -c "echo 'Container works'" || true
+
+      - name: Load image into KinD
+        run: |
           kind load docker-image ghcr.io/deadsnxw/ecommerce-app:latest --name lab3-cluster
 
       - name: Apply Kubernetes manifests
@@ -37,20 +53,6 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: kubectl rollout status deployment/postgres --timeout=60s
-
-      - name: Debug after 30s
-        if: always()
-        run: |
-          sleep 30
-          echo "=== Pods ==="
-          kubectl get pods -o wide
-          echo "=== App logs (previous) ==="
-          kubectl logs -l app=ecommerce-app --previous --tail=50 || true
-          echo "=== App logs (current) ==="
-          kubectl logs -l app=ecommerce-app --tail=50 || true
-          echo "=== Describe pod ==="
-          POD=$(kubectl get pods -l app=ecommerce-app -o jsonpath='{.items[0].metadata.name}')
-          kubectl describe pod $POD | tail -30
 
       - name: Run Grading Script
         run: |
