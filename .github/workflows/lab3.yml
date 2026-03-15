@@ -44,13 +44,13 @@ jobs:
           sleep 30
           echo "=== Pods ==="
           kubectl get pods -o wide
-          echo "=== App logs ==="
+          echo "=== App logs (previous) ==="
+          kubectl logs -l app=ecommerce-app --previous --tail=50 || true
+          echo "=== App logs (current) ==="
           kubectl logs -l app=ecommerce-app --tail=50 || true
-          echo "=== Init container logs ==="
-          kubectl logs -l app=ecommerce-app -c wait-for-postgres --tail=20 || true
-          echo "=== Env in pod ==="
+          echo "=== Describe pod ==="
           POD=$(kubectl get pods -l app=ecommerce-app -o jsonpath='{.items[0].metadata.name}')
-          kubectl exec $POD -- printenv | grep -E "DB_|PORT" || true
+          kubectl describe pod $POD | tail -30
 
       - name: Run Grading Script
         run: |
