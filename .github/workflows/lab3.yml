@@ -38,12 +38,16 @@ jobs:
       - name: Debug pod status
         if: always()
         run: |
+          echo "Waiting 30s for pods to start..."
+          sleep 30
           echo "=== Pods ==="
           kubectl get pods -o wide
           echo "=== Pod description ==="
           kubectl describe pods
           echo "=== Pod logs ==="
-          kubectl logs -l app=ecommerce-app --tail=20 || true
+          kubectl logs -l app=ecommerce-app --tail=50 || true
+          echo "=== Events ==="
+          kubectl get events --sort-by='.lastTimestamp'
 
       - name: Run Grading Script
         run: |
