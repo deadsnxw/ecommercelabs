@@ -35,19 +35,8 @@ jobs:
       - name: Apply Kubernetes manifests
         run: kubectl apply -f k8s/
 
-      - name: Debug pod status
-        if: always()
-        run: |
-          echo "Waiting 30s for pods to start..."
-          sleep 30
-          echo "=== Pods ==="
-          kubectl get pods -o wide
-          echo "=== Pod description ==="
-          kubectl describe pods
-          echo "=== Pod logs ==="
-          kubectl logs -l app=ecommerce-app --tail=50 || true
-          echo "=== Events ==="
-          kubectl get events --sort-by='.lastTimestamp'
+      - name: Wait for PostgreSQL to be ready
+        run: kubectl rollout status deployment/postgres --timeout=60s
 
       - name: Run Grading Script
         run: |
