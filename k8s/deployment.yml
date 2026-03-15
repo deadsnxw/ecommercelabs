@@ -14,8 +14,8 @@ spec:
     spec:
       initContainers:
         - name: wait-for-postgres
-          image: busybox
-          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
+          image: postgres:16
+          command: ['sh', '-c', 'until pg_isready -h postgres -p 5432; do echo waiting for postgres; sleep 2; done']
       containers:
         - name: ecommerce-app
           image: ghcr.io/deadsnxw/ecommerce-app:latest
