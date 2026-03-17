@@ -38,7 +38,8 @@ export const searchUsersByNickname = async (query, limit = 20) => {
     if (!query || typeof query !== 'string' || query.trim().length === 0) {
         return [];
     }
-    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 50);
+    const parsed = parseInt(limit, 10);
+    const safeLimit = Math.min(Math.max(isNaN(parsed) ? 20 : parsed, 1), 50);
     const pattern = `%${query.trim()}%`;
     const { rows } = await pool.query(
         `SELECT 
